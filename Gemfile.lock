@@ -4,6 +4,9 @@ GEM
     backports (3.6.8)
     erubis (2.7.0)
     multi_json (1.12.1)
+    nio4r (2.5.8)
+    puma (5.5.0)
+      nio4r (~> 2.0)
     rack (1.6.4)
     rack-protection (1.5.3)
       rack
@@ -20,6 +23,8 @@ GEM
       rack-test
       sinatra (~> 1.4.0)
       tilt (>= 1.3, < 3)
+    sinatra-reloader (1.0)
+      sinatra-contrib
     tilt (2.0.5)
 
 PLATFORMS
@@ -27,8 +32,13 @@ PLATFORMS
 
 DEPENDENCIES
   erubis
+  puma
   sinatra (~> 1.4.7)
   sinatra-contrib
+  sinatra-reloader
+
+RUBY VERSION
+   ruby 2.7.1p83
 
 BUNDLED WITH
    2.2.25

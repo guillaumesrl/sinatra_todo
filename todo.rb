@@ -1,7 +1,7 @@
 # frozen_String_literal: true
 
 require 'sinatra'
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 require 'tilt/erubis'
 require 'sinatra/contrib'
 
@@ -36,6 +36,10 @@ helpers do
     complete_lists.each(&block)
   end
 
+  def h(content)
+    Rack::Utils.escape_html(content)
+  end
+
   def sorted_todos(todos)
     complete_todos, incomplete_todos = todos.partition { |todo| todo[:completed]}
     incomplete_todos.each { |todo| yield(todo, todos.index(todo))}
@@ -46,6 +50,7 @@ end
 configure do
   enable :sessions
   set :session_secret, 'secret'
+  set :erb, :escape_html => true
 end
 
 before do
@@ -98,15 +103,20 @@ post '/lists/new' do
   end
 end
 
+def load_list(id)
+  list = session[:lists][id] if id && session[:lists][id]
+  return list if list
+
+  session[:error] = "This list doesn't exist"
+  redirect "/lists"
+end
+
+
+
 get '/lists/:id' do
   @id = params[:id].to_i
-  if (error = error_for_list_id(@id))
-    session[:error] = error
-    redirect "/lists"
-  else
-    @list = session[:lists][@id]
-    erb :list, layout: :layout
-  end
+  @list = load_list(@id)
+  erb :list, layout: :layout
 end
 
 
@@ -114,7 +124,7 @@ end
 post '/lists/:id' do
   todo = params[:todo].strip
   @id = params[:id].to_i
-  @list = session[:lists][@id]
+  @list = load_list(@id)
   if (error = error_for_todo(todo, @list))
     session[:error] = error
     erb :list, layout: :layout
@@ -126,15 +136,15 @@ post '/lists/:id' do
 end
 
 get '/lists/:id/edit' do
-  id = params[:id].to_i
-  @list = session[:lists][id]
+  @id = params[:id].to_i
+  @list = load_list(@id)
   erb :edit_list, layout: :layout
 end
 
 post '/lists/:id/edit' do
-  id = params[:id].to_i
+  @id = params[:id].to_i
   list_name = params[:list_name].strip
-  @list = session[:lists][id]
+  @list = load_list(@id)
   if (error = error_for_list_name(list_name))
     session[:error] = error
     erb :edit_list, layout: :layout

@@ -1,5 +1,5 @@
 <ul id="lists">
-  <% sorted_lists(session[:lists]) do |list, idx| %>
+  <% sorted_lists(session[:lists ]) do |list, idx| %>
     <li class="<%= list_class(list) %>">
       <a href="/lists/<%= idx %>">
         <h2><%= list[:name] %></h2>
