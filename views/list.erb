@@ -22,18 +22,18 @@
 
 
   <ul>
-    <% sorted_todos(@list[:todos]) do |todo, index| %>
+    <% sorted_todos(@list[:todos]) do |todo| %>
       <% if todo[:completed] %>
       <li class="complete">
       <% else %>
       <li>
       <% end %>
-          <form action="/lists/<%= @id %>/<%= index %>/update" method="post" class="check">
+          <form action="/lists/<%= @id %>/<%= todo[:id] %>/update" method="post" class="check">
             <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
             <button type="submit">Complete</button>
           </form>
           <h3><%= todo[:name] %></h3>
-          <form action="/lists/<%= @id %>/<%= index %>/delete" method="post" class="delete">
+          <form action="/lists/<%= @id %>/<%= todo[:id] %>/delete" method="post" class="delete">
             <button type="submit">Delete</button>
           </form>
       </li>
